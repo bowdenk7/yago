@@ -17,7 +17,7 @@ tmp
 #pycharm ignores
 .idea/workspace.xml
 .idea/dictionaries/
-.idea/LatePlateApp.iml
+.idea/Yago.iml
 .idea/misc.xml
 .idea/late-plate.iml
 dev.db
