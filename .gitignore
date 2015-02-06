@@ -1,0 +1,23 @@
+*~
+*.orig
+*.pyc
+*.rej
+.installed.cfg
+__minitage__*
+bin/*
+develop-eggs
+downloads
+eggs
+log
+parts
+media/uploads
+tmp
+.DS_Store
+
+#pycharm ignores
+.idea/workspace.xml
+.idea/dictionaries/
+.idea/LatePlateApp.iml
+.idea/misc.xml
+.idea/late-plate.iml
+dev.db
