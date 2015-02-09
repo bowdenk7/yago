@@ -1,0 +1,6 @@
+machine:
+  environment:
+    DJANGO_SECRET_KEY: 1412412er1fsaggrg
+    DB_USER: test
+    DB_NAME: Yago
+    DB_PASSWORD: password
