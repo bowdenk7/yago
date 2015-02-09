@@ -4,3 +4,4 @@ machine:
     DB_USER: test
     DB_NAME: Yago
     DB_PASSWORD: password
+    DJANGO_DEBUG: False
