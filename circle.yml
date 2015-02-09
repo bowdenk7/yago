@@ -5,3 +5,6 @@ machine:
     DB_NAME: Yago
     DB_PASSWORD: password
     DJANGO_DEBUG: False
+
+  test:
+    override: python manage.py test yagoapp
