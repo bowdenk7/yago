@@ -6,5 +6,5 @@ machine:
     DB_PASSWORD: password
     DJANGO_DEBUG: False
 
-  test:
-    override: python manage.py test yagoapp
+test:
+git status  override: python manage.py test yagoapp
