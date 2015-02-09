@@ -7,4 +7,5 @@ machine:
     DJANGO_DEBUG: False
 
 test:
-  override: python manage.py test yagoapp
+  override:
+    - python manage.py test yagoapp
