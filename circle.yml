@@ -7,4 +7,4 @@ machine:
     DJANGO_DEBUG: False
 
 test:
-git status  override: python manage.py test yagoapp
+  override: python manage.py test yagoapp
