@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url, include
 import views
-from yago.urls import router
+from yagoapp.urls import router
 
 
 router.register(r'users', views.UserViewSet)

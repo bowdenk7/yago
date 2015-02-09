@@ -69,9 +69,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'yago.urls'
+ROOT_URLCONF = 'yagoapp.urls'
 
-WSGI_APPLICATION = 'yago.wsgi.application'
+WSGI_APPLICATION = 'yagoapp.wsgi.application'
 
 
 # Internationalization
