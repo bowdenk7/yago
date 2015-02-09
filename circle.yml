@@ -3,9 +3,5 @@ machine:
     DJANGO_SECRET_KEY: 1412412er1fsaggrg
     DB_USER: ubuntu
     DB_NAME: circle_test
-    DB_PASSWORD: 
+    DB_PASSWORD:
     DJANGO_DEBUG: False
-
-test:
-  override:
-    - python manage.py test yagoapp
