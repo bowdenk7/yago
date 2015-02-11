@@ -5,3 +5,5 @@ machine:
     DB_NAME: circle_test
     DB_PASSWORD:
     DJANGO_DEBUG: False
+    HEROKU: False
+    USE_AWS: Falseg
