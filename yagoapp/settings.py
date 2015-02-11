@@ -55,6 +55,15 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = 'staticfiles'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+
 if USE_AWS:
     AWS_BUCKET_NAME = get_env_variable('AWS_BUCKET_NAME')
     AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY')
