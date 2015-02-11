@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'feed',
     'user_post',
     'account',
+    'util'
 )
 
 REST_FRAMEWORK = {
