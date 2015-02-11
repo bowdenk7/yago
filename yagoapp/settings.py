@@ -14,7 +14,6 @@ import os
 import dj_database_url
 
 from util.settingsUtil import get_env_variable
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ADMINS = (
     ('Bowden Kelly', 'bowdenk7@gmail.com'),
@@ -50,14 +49,10 @@ else:
     }
 }
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# Allow all host headers
-ALLOWED_HOSTS = ['*']
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # STATIC_ROOT = 'static'
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
@@ -74,6 +69,11 @@ if USE_AWS:
     STATIC_ROOT = '/static/'
     STATIC_URL = S3_URL + 'static/'
     MEDIA_ROOT = S3_URL + 'uploads/'
+
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Allow all host headers
+    ALLOWED_HOSTS = ['*']
 
 #uncomment for SES email support
 # EMAIL_BACKEND = 'django_ses.SESBackend'
