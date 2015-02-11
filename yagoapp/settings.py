@@ -56,8 +56,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['*']
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = '/static/'
-STATIC_URL = '/static/'
+# STATIC_ROOT = 'static'
+# STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
@@ -71,7 +71,7 @@ if USE_AWS:
     S3_URL = 'http://s3.amazonaws.com/%s/' % AWS_BUCKET_NAME
     DEFAULT_FILE_STORAGE = 'util.s3utils.MediaRootS3BotoStorage'
     STATICFILES_STORAGE = 'util.s3utils.StaticRootS3BotoStorage'
-
+    STATIC_ROOT = '/static/'
     STATIC_URL = S3_URL + 'static/'
     MEDIA_ROOT = S3_URL + 'uploads/'
 
@@ -136,9 +136,3 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
-if not USE_AWS:
-    STATIC_URL = '/static/'
