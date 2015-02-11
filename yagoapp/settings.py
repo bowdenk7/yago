@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     'geoposition',
     'feed',
     'user_post',
+    'account',
 )
 
 REST_FRAMEWORK = {

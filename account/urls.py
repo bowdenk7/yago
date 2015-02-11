@@ -1,5 +1,5 @@
-from django.conf.urls import patterns, url, include
-import views
+from django.conf.urls import patterns
+from account import views
 from yagoapp.urls import router
 
 
