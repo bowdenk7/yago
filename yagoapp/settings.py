@@ -86,8 +86,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'django_filters',
     'markdown',
-    'geoposition',
-    'account',
+    'geoposition',g
     'feed',
     'user_post',
 )
