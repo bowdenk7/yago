@@ -6,4 +6,4 @@ machine:
     DB_PASSWORD:
     DJANGO_DEBUG: False
     HEROKU: False
-    USE_AWS: Falseg
+    USE_AWS: False
