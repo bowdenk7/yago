@@ -10,6 +10,10 @@ urlpatterns = patterns('',
 
     url(r'^account/', include('account.urls', namespace='account')),
 
+    url(r'^feed/', include('feed.urls', namespace='feed')),
+
+    url(r'^post/', include('user_post.urls', namespace='post')),
+
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^', include(router.urls))
