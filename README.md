@@ -46,6 +46,8 @@ export DB_NAME=<whatever you intend to call your local db>
 export DB_USER=<db username, if on OSX, this defaults to your admin username>
 export DB_PASSWORD=<whatever you want>
 export DJANGO_SECRET_KEY=<this isnt important locally, just make a few random characters>
+export USE_AWS=False
+export HEROKU=False
 ```
 
 predeactivate - Removes environment variables previously setup
@@ -58,6 +60,8 @@ unset DB_NAME
 unset DB_USER
 unset DB_PASSWORD
 unset DJANGO_SECRET_KEY
+unset USE_AWS
+unset HEROKU
 ```
 
 Test to see if it is working
