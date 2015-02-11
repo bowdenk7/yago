@@ -99,7 +99,8 @@ INSTALLED_APPS = (
     'feed',
     'user_post',
     'account',
-    'u
+    'util'
+)
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
