@@ -69,8 +69,8 @@ if USE_AWS:
     AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY')
     AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
     S3_URL = 'http://s3.amazonaws.com/%s/' % AWS_BUCKET_NAME
-    DEFAULT_FILE_STORAGE = 'Util.s3utils.MediaRootS3BotoStorage'
-    STATICFILES_STORAGE = 'Util.s3utils.StaticRootS3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'util.s3utils.MediaRootS3BotoStorage'
+    STATICFILES_STORAGE = 'util.s3utils.StaticRootS3BotoStorage'
 
     STATIC_URL = S3_URL + 'static/'
     MEDIA_ROOT = S3_URL + 'uploads/'
