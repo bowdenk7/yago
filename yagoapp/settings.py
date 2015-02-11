@@ -10,9 +10,10 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from util.settingsUtil import get_env_variable
+
 import dj_database_url
 
+from util.settingsUtil import get_env_variable
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ADMINS = (
