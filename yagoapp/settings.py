@@ -56,7 +56,6 @@ ALLOWED_HOSTS = ['*']
 
 if USE_AWS:
     AWS_BUCKET_NAME = get_env_variable('AWS_BUCKET_NAME')
-    AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_BUCKET_NAME')
     AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY')
     AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
     S3_URL = 'http://s3.amazonaws.com/%s/' % AWS_BUCKET_NAME
@@ -130,5 +129,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
-STATIC_URL = '/static/'
+if not USE_AWS:
+    STATIC_URL = '/static/'
