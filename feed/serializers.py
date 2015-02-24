@@ -5,7 +5,7 @@ from feed.models import Venue, District
 class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
-        fields = ('name', 'position', 'cost', 'logo_url', 'classification')
+        fields = ('name', 'district', 'position', 'cost', 'logo_url', 'classification')
 
 
 class DistrictSerializer(serializers.ModelSerializer):
