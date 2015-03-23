@@ -12,6 +12,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='District',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=200)),
+                ('position', geoposition.fields.GeopositionField(max_length=42)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Venue',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -38,6 +49,12 @@ class Migration(migrations.Migration):
             model_name='venue',
             name='classification',
             field=models.ForeignKey(to='feed.VenueClassification'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='venue',
+            name='district',
+            field=models.ForeignKey(related_name='venues', to='feed.District'),
             preserve_default=True,
         ),
     ]

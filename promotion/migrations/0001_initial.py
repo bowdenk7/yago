@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
-import geoposition.fields
 
 
 class Migration(migrations.Migration):
@@ -15,23 +14,24 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Like',
+            name='Promotion',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('timestamp', models.DateTimeField(auto_now_add=True)),
+                ('expiration', models.DateTimeField(blank=True)),
+                ('redeemed', models.BooleanField(default=False)),
             ],
             options={
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Post',
+            name='PromotionType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('image_url', models.CharField(unique=True, max_length=400)),
-                ('thumbnail_url', models.CharField(unique=True, max_length=400)),
-                ('position', geoposition.fields.GeopositionField(max_length=42)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(related_name='posts', to=settings.AUTH_USER_MODEL)),
+                ('name', models.CharField(max_length=120)),
+                ('description', models.CharField(max_length=400)),
+                ('point_cost', models.IntegerField()),
                 ('venue', models.ForeignKey(to='feed.Venue')),
             ],
             options={
@@ -39,15 +39,15 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AddField(
-            model_name='like',
-            name='post',
-            field=models.ForeignKey(to='user_post.Post'),
+            model_name='promotion',
+            name='type',
+            field=models.ForeignKey(to='promotion.PromotionType'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='like',
+            model_name='promotion',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='promotions', to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
     ]
