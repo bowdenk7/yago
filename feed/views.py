@@ -26,32 +26,30 @@ class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
 # @list_route(methods=['get'])
 @api_view(['GET'])
 def get_district_feed(request, pk):
-    # serializer = DistrictSerializer(data=request.data)
-    # district_id = serializer.data['district']
-    venues = Venue.objects.filter(
-            district=pk
-        ).annotate(
-            post_count=Count("post")
+    venues = Venue.objects.filter(district=pk
+        ).annotate(post_count=Count("post")
         ).order_by('-post_count')
     serializer = VenueSerializer(venues, many=True)
-    # how to order by number of posts in last 24 hours? would we need a venue/post join table, and delete as necessary?
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def get_bar_feed(request, pk):
-    posts = Post.objects.filter(venue=pk)
+    posts = Post.objects.filter(venue=pk
+        ).annotate(like_count=Count("like")
+        ).order_by('-like_count'
+        ).exclude(like_count=0)
+    # for testing purposes I exclude posts without likes
     serializer = PostSerializer(posts, context={'request': request}, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def get_highlights_feed(request, pk):
-    posts = Post.objects.filter(
-            venue__district=pk
-        ).annotate(
-            like_count=Count("like")
-        ).order_by('-like_count')
-    # will need to determine a schema for ordering by attributes not part of model
+    posts = Post.objects.filter(venue__district=pk
+        ).annotate(like_count=Count("like")
+        ).order_by('-like_count'
+        ).exclude(like_count=0)
+    # for testing purposes I exclude posts without likes
     serializer = PostSerializer(posts, context={'request': request}, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
