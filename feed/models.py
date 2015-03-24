@@ -18,4 +18,3 @@ class Venue(models.Model):
     logo_url = models.CharField(max_length=400, unique=True)
     classification = models.ForeignKey(VenueClassification)
     district = models.ForeignKey(District, related_name="venues")
-
