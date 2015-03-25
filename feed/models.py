@@ -16,5 +16,5 @@ class Venue(models.Model):
     position = GeopositionField()
     cost = models.SmallIntegerField()
     logo_url = models.CharField(max_length=400, unique=True)
-    classification = models.ForeignKey(VenueClassification)
-    district = models.ForeignKey(District, related_name="venues")
+    classification = models.ForeignKey(VenueClassification, related_name='classifications')
+    district = models.ForeignKey(District, related_name='venues')
