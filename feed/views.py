@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route, list_route, api_view
 from rest_framework.response import Response
@@ -34,6 +35,7 @@ class DistrictViewSet(viewsets.ModelViewSet):
 
 # @list_route(methods=['get'])
 @api_view(['GET'])
+@csrf_exempt
 def get_district_feed(request, pk):
     """
     Returns a list of all venues for a particular district
