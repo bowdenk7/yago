@@ -11,6 +11,6 @@ urlpatterns = patterns('',
     url(r'^like_post/$', csrf_exempt(views.like_post)),
     url(r'^report_post/$', csrf_exempt(views.report_post)),
 
-    url(r'^$', csrf_exempt(views.PostList.as_view())),
-    url(r'^(?P<pk>[0-9]+)/$', csrf_exempt(views.PostDetail.as_view())),
+    url(r'^$', views.PostList.as_view()),
+    url(r'^(?P<pk>[0-9]+)/$', views.PostDetail.as_view()),
 )
