@@ -34,8 +34,8 @@ class DistrictViewSet(viewsets.ModelViewSet):
 
 
 # @list_route(methods=['get'])
-@api_view(['GET'])
 @csrf_exempt
+@api_view(['GET'])
 def get_district_feed(request, pk):
     """
     Returns a list of all venues for a particular district
@@ -50,7 +50,7 @@ def get_district_feed(request, pk):
     serializer = VenueSerializer(venues, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+@csrf_exempt
 @api_view(['GET'])
 def get_location_feed(request, position):
     """
