@@ -5,13 +5,13 @@ from feed.models import Venue, VenueClassification, District
 class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
-        fields = ('name', 'position', 'cost', 'logo_url', 'classification', 'district')
+        fields = ('pk', 'name', 'position', 'cost', 'logo_url', 'classification', 'district')
 
 
 class VenueClassificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = VenueClassification
-        fields = ('name')
+        fields = ('pk', 'name')
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -20,4 +20,4 @@ class DistrictSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        fields = ('name', 'position')
+        fields = ('pk', 'name', 'position')
