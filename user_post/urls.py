@@ -2,8 +2,6 @@ from django.conf.urls import patterns, url
 from user_post import views
 from yagoapp.urls import router
 
-<<<<<<< Updated upstream
-
 router.register(r'posts', views.PostViewSet)
 router.register(r'reported_posts', views.ReportedPostViewSet)
 router.register(r'likes', views.LikeViewSet)
