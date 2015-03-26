@@ -2,7 +2,7 @@ from rest_framework import serializers
 from feed.models import Venue, VenueClassification, District
 
 
-class VenueSerializer(serializers.HyperlinkedModelSerializer):
+class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
         fields = ('name', 'position', 'cost', 'logo_url', 'classification', 'district')
