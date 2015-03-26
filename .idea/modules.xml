@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/yago.iml" filepath="$PROJECT_DIR$/.idea/yago.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Yago.iml" filepath="$PROJECT_DIR$/.idea/Yago.iml" />
     </modules>
   </component>
 </project>
+

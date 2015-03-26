@@ -8,8 +8,8 @@ REPORTED_POST_COUNT_THRESHOLD = 3
 
 
 class Post(models.Model):
-    image_url = models.CharField(max_length=400, unique=True)
-    thumbnail_url = models.CharField(max_length=400, unique=True)
+    image_url = models.CharField(max_length=400)
+    thumbnail_url = models.CharField(max_length=400)
     position = GeopositionField()
     user = models.ForeignKey(User, related_name='posts')
     timestamp = models.DateTimeField(auto_now_add=True)

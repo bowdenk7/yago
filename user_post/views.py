@@ -1,17 +1,91 @@
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+from django.http import Http404
 from rest_framework import viewsets, status
-from rest_framework.decorators import detail_route, list_route, api_view
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from feed.models import Venue
+
 from user_post.models import Post, ReportedPost, Like, REPORTED_POST_COUNT_THRESHOLD
 from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer
-from django.db.models import Count
+from yagoapp.settings import POSTS_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME, MEDIA_ROOT
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostList(APIView):
     """
-    API endpoint that allows posts to be viewed or edited.
+    List all posts, or create a new post.
+
+    POST params
+    image
+    position
+    venue
     """
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+
+    def get(self, request, format=None):
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        image_url = ""
+        thumbnail_url = ""
+
+        #need to generate a pk
+        post = Post(image_url="",
+                    thumbnail_url="",
+                    position=request.data['position'],
+                    user=request.user,
+                    venue=Venue.objects.get(pk=int(request.data['venue'])))
+        post.save()
+
+        f = request.data['file']
+        image_string = f.read()
+
+        #TODO generate thumbnail
+
+        #TODO add error handling
+
+        image_url = POSTS_URL + post.venue.name + "/" + str(post.pk) + ".png"
+        conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        bucket = conn.get_bucket(AWS_STORAGE_BUCKET_NAME)
+        key = Key(bucket)
+        key.key = image_url
+        key.set_contents_from_string(image_string)
+
+        data = dict()
+        data['image_url'] = image_url
+        data['thumbnail_url'] = thumbnail_url
+        data['user'] = request.user
+        data['position'] = request.data['position']
+        data['venue'] = request.data['venue']
+        post.image_url = MEDIA_ROOT + image_url
+        post.thumbnail_url = thumbnail_url
+        post.save()
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class PostDetail(APIView):
+    """
+    Retrieve or delete a post instance.
+    """
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        post = self.get_object(pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
+    def delete(self, request, pk, format=None):
+        post = self.get_object(pk)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ReportedPostViewSet(viewsets.ModelViewSet):
@@ -28,18 +102,6 @@ class LikeViewSet(viewsets.ModelViewSet):
     """
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
-
-
-@api_view(['POST'])
-def create_post(request):
-    '''
-    Create a post for a venue
-    '''
-    serializer = PostSerializer(data=request.data, context={'request': request})
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

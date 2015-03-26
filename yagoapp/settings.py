@@ -33,6 +33,8 @@ USE_AWS = get_env_variable('USE_AWS') == "True"
 
 TEMPLATE_DEBUG = True
 
+POSTS_URL = "uploads/posts/"
+
 ALLOWED_HOSTS = []
 
 if HEROKU:
@@ -68,7 +70,7 @@ if USE_AWS:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_ROOT = '/static/'
     STATIC_URL = S3_URL + 'static/'
-    MEDIA_ROOT = S3_URL + 'uploads/'
+    MEDIA_ROOT = S3_URL
 
     # Honor the 'X-Forwarded-Proto' header for request.is_secure()
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
