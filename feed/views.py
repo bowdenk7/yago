@@ -40,9 +40,11 @@ def get_district_feed(request, pk):
 
     e.g. input Buckhead, get back Moondogs, Red Door, Hole in the Wall, etc.
     """
-    venues = Venue.objects.filter(district=pk
-        ).annotate(post_count=Count("post")
-        ).order_by('-post_count')
+    # Getting error, think related to no posts for a venue?
+    # venues = Venue.objects.filter(district=pk
+    #     ).annotate(post_count=Count("post")
+    #     ).order_by('-post_count')
+    venues = Venue.objects.filter(district=pk)
     serializer = VenueSerializer(venues, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
