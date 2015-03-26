@@ -92,9 +92,10 @@ def get_bar_feed(request, pk):
 
     e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
     """
-    posts = Post.objects.filter(venue=pk
-        ).annotate(like_count=Count("like")
-        ).order_by('-like_count')
+    # posts = Post.objects.filter(venue=pk
+    #     ).annotate(like_count=Count("like")
+    #     ).order_by('-like_count')
+    posts = Post.objects.filter(venue=pk)
     serializer = PostSerializer(posts, context={'request': request}, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
