@@ -1,6 +1,8 @@
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from django.http import Http404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -70,6 +72,10 @@ class PostDetail(APIView):
     """
     Retrieve or delete a post instance.
     """
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(PostDetail, self).dispatch(*args, **kwargs)
 
     def get_object(self, pk):
         try:
