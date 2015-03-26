@@ -6,7 +6,7 @@ router.register(r'reported_posts', views.ReportedPostViewSet)
 router.register(r'likes', views.LikeViewSet)
 
 urlpatterns = patterns('',
-                       
+
     url(r'^like_post/$', views.like_post),
     url(r'^report_post/$', views.report_post),
 
