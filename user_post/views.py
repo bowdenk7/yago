@@ -33,6 +33,7 @@ class PostList(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
+    @csrf_exempt
     def post(self, request, format=None):
         image_url = ""
         thumbnail_url = ""
