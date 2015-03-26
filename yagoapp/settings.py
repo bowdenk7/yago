@@ -122,6 +122,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'yagoapp.middleware.DisableCSRF',
 )
 
 ROOT_URLCONF = 'yagoapp.urls'
