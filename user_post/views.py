@@ -24,6 +24,10 @@ class PostList(APIView):
     venue
     """
 
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(PostList, self).dispatch(*args, **kwargs)
+
     def get(self, request, format=None):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
