@@ -13,7 +13,7 @@ class Post(models.Model):
     position = GeopositionField()
     user = models.ForeignKey(User, related_name='posts')
     timestamp = models.DateTimeField(auto_now_add=True)
-    venue = models.ForeignKey(Venue, related_name='venues')
+    venue = models.ForeignKey(Venue)
 
 
 class ReportedPost(models.Model):
@@ -23,4 +23,4 @@ class ReportedPost(models.Model):
 
 class Like(models.Model):
     user = models.ForeignKey(User)
-    post = models.ForeignKey(Post, related_name='likes')
+    post = models.ForeignKey(Post)

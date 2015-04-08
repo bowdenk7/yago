@@ -191,7 +191,7 @@ def like_post(request):
     serializer = LikeSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
 
-        like = Like.objects.filter(user=int(serializer.data['user'].split('/')[-2]), post=int(serializer.data['post'].split('/')[-2]))
+        like = Like.objects.filter(user=serializer.data['user'], post=serializer.data['post'])
         if like.count() > 0:
             # if the user has already liked the post, unlike the post
             like.delete()

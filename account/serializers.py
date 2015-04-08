@@ -4,9 +4,9 @@ from user_post.models import Post
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    posts = serializers.HyperlinkedRelatedField(queryset=Post.objects.all(),
-                                                view_name='post-detail', many=True)
+    # posts = serializers.HyperlinkedRelatedField(queryset=Post.objects.all(),
+    #                                             view_name='post-detail', many=True)
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'posts')
+        fields = ('url', 'username', 'email')
