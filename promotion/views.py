@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from promotion.models import PromotionType, Promotion
 from promotion.serializers import PromotionTypeSerializer, PromotionSerializer
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class PromotionTypeViewSet(viewsets.ReadOnlyModelViewSet):
@@ -62,32 +62,6 @@ def get_district_promotion_type_feed(request, pk):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@csrf_exempt
-@api_view(['GET'])
-def get_user_promotion_feed(request, pk):
-    """
-    Returns a list of all unredeemed promotions "purchased" by a particular user
-
-    e.g. input user ID, get back promotions about free cover and discounts that have not yet been redeemed
-    """
-    promotions = Promotion.objects.filter(user=pk, redeemed=False).order_by('-expiration')
-    serializer = PromotionSerializer(promotions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(['GET'])
-def get_user_promotion(request, pk):
-    """
-    Returns an unredeemed promotions "purchased" by a particular user
-
-    e.g. input promotion ID that promotion if unredeemed
-    """
-    promotion = Promotion.objects.get(pk=pk).exclude(redeemed=True)
-    serializer = PromotionSerializer(promotion)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 @api_view(['POST'])
 def purchase_promotion(request):
     '''
@@ -100,7 +74,7 @@ def purchase_promotion(request):
         serializer = PromotionSerializer(promotion)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except ObjectDoesNotExist:
-        return Response(data=None, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
