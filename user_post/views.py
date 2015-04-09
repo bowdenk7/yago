@@ -1,5 +1,6 @@
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+from django.db.models import Count
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from feed.models import Venue
+from datetime import datetime, timedelta
 
 from user_post.models import Post, ReportedPost, Like, REPORTED_POST_COUNT_THRESHOLD
 from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer
@@ -152,6 +154,78 @@ class LikeViewSet(viewsets.ModelViewSet):
     """
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_recent_posts(request):
+    """
+    Returns a list of all posts made in the last 24 hours, newest first
+    """
+    yesterday = datetime.now() - timedelta(hours=24)
+    posts = Post.objects.filter(timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_top_posts(request):
+    """
+    Returns a list of all posts made in the last 24 hours, most likes first
+    """
+    yesterday = datetime.now() - timedelta(hours=24)
+    posts = Post.objects.filter(timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_recent_venue_posts(request, pk):
+    """
+    Returns a list of all posts made for a venue in the last 24 hours, newest first
+    """
+    yesterday = datetime.now() - timedelta(hours=24)
+    posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_top_venue_posts(request, pk):
+    """
+    Returns a list of all posts made for a venue in the last 24 hours, most likes first
+    """
+    yesterday = datetime.now() - timedelta(hours=24)
+    posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_recent_district_posts(request, pk):
+    """
+    Returns a list of all posts made for a venue in the last 24 hours, newest first
+    """
+    yesterday = datetime.now() - timedelta(hours=24)
+    posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_top_district_posts(request, pk):
+    """
+    Returns a list of all posts made for a venue in the last 24 hours, most likes first
+    """
+    yesterday = datetime.now() - timedelta(hours=24)
+    posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
