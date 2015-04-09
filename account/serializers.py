@@ -3,10 +3,8 @@ from django.contrib.auth.models import User
 from user_post.models import Post
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    # posts = serializers.HyperlinkedRelatedField(queryset=Post.objects.all(),
-    #                                             view_name='post-detail', many=True)
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'email')
+        fields = ('username', 'pk')

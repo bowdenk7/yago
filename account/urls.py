@@ -1,4 +1,4 @@
-from django.conf.urls import patterns
+from django.conf.urls import patterns, url
 from account import views
 from yagoapp.urls import router
 
@@ -6,6 +6,8 @@ from yagoapp.urls import router
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = patterns('',
+
+    url(r'^register-by-token/$', views.social_register, name='register')
 
     # Attempt to register a new user
     # url(r'^register/$', views.register_user, name='register'),

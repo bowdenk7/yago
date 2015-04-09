@@ -41,16 +41,15 @@ if HEROKU:
     DATABASES = {'default': dj_database_url.config()}
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Add 'postgresql_psycopg2'
-        'NAME': get_env_variable('DB_NAME'),
-        'USER': get_env_variable('DB_USER'),
-        'PASSWORD': get_env_variable('DB_PASSWORD'),
-        'HOST': 'localhost',             # Set to empty string for localhost.
-        'PORT': '',                      # Set to empty string for default.
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2'
+            'NAME': get_env_variable('DB_NAME'),
+            'USER': get_env_variable('DB_USER'),
+            'PASSWORD': get_env_variable('DB_PASSWORD'),
+            'HOST': 'localhost', # Set to empty string for localhost.
+            'PORT': '', # Set to empty string for default.
+        }
     }
-}
-
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # STATIC_ROOT = 'static'
@@ -59,7 +58,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-
 
 if USE_AWS:
     AWS_STORAGE_BUCKET_NAME = get_env_variable('AWS_BUCKET_NAME')
@@ -103,8 +101,39 @@ INSTALLED_APPS = (
     'user_post',
     'account',
     'util',
-    'promotion'
+    'promotion',
+    'social.apps.django_app.default',
 )
+
+
+###############
+# Social Auth #
+###############
+
+AUTHENTICATION_BACKENDS = {
+    'social.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+}
+
+SOCIAL_AUTH_FACEBOOK_KEY = '1054714047878093'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'c98acf52ab9ebe93f67ca89c6bb23e39'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['public_profile', 'email', 'user_friends']
+
+SOCIAL_AUTH_STORAGE = 'social.apps.django_app.default.models.DjangoStorage'
+#SOCIAL_AUTH_USER_MODEL = 'django.contrib.auth.User'
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['first_name', 'email']
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'social.apps.django_app.context_processors.backends',  # determine which accounts are active for current user
+    'django.contrib.auth.context_processors.auth',
+    #'social.apps.django_app.context_processors.login_redirect',
+)
+
+###################
+# End Social Auth #
+###################
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -112,7 +141,6 @@ REST_FRAMEWORK = {
     ),
     'PAGINATE_BY': 10
 }
-
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -123,6 +151,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'yagoapp.middleware.DisableCSRF',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
 )
 
 ROOT_URLCONF = 'yagoapp.urls'

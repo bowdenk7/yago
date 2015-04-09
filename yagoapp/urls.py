@@ -6,6 +6,8 @@ router = routers.DefaultRouter()
 
 urlpatterns = patterns('',
 
+    url('', include('social.apps.django_app.urls', namespace='social')),
+
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^account/', include('account.urls', namespace='account')),
