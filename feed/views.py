@@ -61,54 +61,6 @@ def get_top_district_feed(request, pk):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-def get_recent_venue_feed(request, pk):
-    """
-    Returns a list of images for a particular venue, newest first
-
-    e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
-    """
-    posts = Post.objects.filter(venue=pk).order_by('-timestamp')
-    serializer = PostSerializer(posts, context={'request': request}, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_top_venue_feed(request, pk):
-    """
-    Returns a list of images for a particular venue, most likes first
-
-    e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
-    """
-    posts = Post.objects.filter(venue=pk).annotate(Count('like')).order_by('-like__count')
-    serializer = PostSerializer(posts, context={'request': request}, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_recent_highlights_feed(request, pk):
-    """
-    Returns a list of images for a particular district, newest first
-
-    e.g. input Buckhead, get back Image9 with 30 likes, Image3 with 17 likes, etc.
-    """
-    posts = Post.objects.filter(venue__district=pk).order_by('-timestamp')
-    serializer = PostSerializer(posts, context={'request': request}, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_top_highlights_feed(request, pk):
-    """
-    Returns a list of images for a particular district, most likes first
-
-    e.g. input Buckhead, get back Image9 with 30 likes, Image3 with 17 likes, etc.
-    """
-    posts = Post.objects.filter(venue__district=pk).annotate(Count('like')).order_by('-like__count')
-    serializer = PostSerializer(posts, context={'request': request}, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 @csrf_exempt
 @api_view(['GET'])
 def get_location_feed(request, position):
