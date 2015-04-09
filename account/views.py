@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
-from social.apps.django_app.utils import strategy
+from social.apps.django_app.utils import strategy, psa
 from account.serializers import UserSerializer
 from rest_framework.response import Response
 
@@ -16,7 +16,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-@strategy()
+@psa()
 def auth_by_token(request, backend):
     user = request.user
     user = request.backend.do_auth(
@@ -35,8 +35,4 @@ def auth_by_token(request, backend):
 def social_register(request):
     user = auth_by_token(request, "facebook")  # hard coded facebook because that's all we plan to support atm
     serializer = UserSerializer(user)
-    if serializer.is_valid():
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    else:
-        serializer = UserSerializer()
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status=status.HTTP_200_OK)
