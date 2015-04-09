@@ -3,9 +3,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
-from social.apps.django_app.utils import load_backend, psa, strategy
+from social.apps.django_app.utils import strategy
 from account.serializers import UserSerializer
-from social.apps.django_app import load_strategy
 from rest_framework.response import Response
 
 
@@ -25,6 +24,7 @@ def auth_by_token(request, backend):
         user=user.is_authenticated() and user or None
     )
     if user and user.is_active:
+        login(request, user)
         return user
     else:
         return None
@@ -33,17 +33,10 @@ def auth_by_token(request, backend):
 @csrf_exempt
 @api_view(['POST'])
 def social_register(request):
-    auth_token = request.DATA.get('access_token', None)
-    if auth_token:
-        try:
-            user = auth_by_token(request, "facebook")
-        except Exception, err:
-            return Response(str(err), status=400)
-        if user:
-            login(request, user)
-            return Response("User logged in", status=status.HTTP_200_OK)
-        else:
-            return Response("Bad Credentials", status=403)
+    user = auth_by_token(request, "facebook")  # hard coded facebook because that's all we plan to support atm
+    serializer = UserSerializer(user)
+    if serializer.is_valid():
+        return Response(serializer.data, status=status.HTTP_200_OK)
     else:
-        return Response("Bad request", status=400)
-
+        serializer = UserSerializer()
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
