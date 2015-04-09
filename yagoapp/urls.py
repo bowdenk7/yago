@@ -14,6 +14,8 @@ urlpatterns = patterns('',
 
     url(r'^post/', include('user_post.urls', namespace='post')),
 
+    url(r'^promotion/', include('promotion.urls', namespace='promotion')),
+
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     url(r'^', include(router.urls))

@@ -1,9 +1,15 @@
 from rest_framework import serializers
-from feed.models import Venue
+from promotion.models import PromotionType, Promotion
+
+
+class PromotionTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PromotionType
+        fields = ('venue', 'name', 'description', 'point_cost')
 
 
 class PromotionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Venue
-        fields = ('user', 'timestamp', 'expiration', 'redeemed')
+        model = Promotion
+        fields = ('user', 'timestamp', 'expiration', 'type', 'redeemed')
 

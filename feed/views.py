@@ -7,7 +7,9 @@ from feed.serializers import VenueSerializer, VenueClassificationSerializer, Dis
 from user_post.models import Post
 from user_post.serializers import PostSerializer
 from django.db.models import Count, F
-from math import sin, cos, atan2, sqrt
+from math import radians, cos, sin, sqrt
+# from scipy.spatial import KDTree
+
 
 
 class VenueViewSet(viewsets.ModelViewSet):
@@ -34,7 +36,6 @@ class DistrictViewSet(viewsets.ModelViewSet):
     serializer_class = DistrictSerializer
 
 
-# @list_route(methods=['get'])
 @csrf_exempt
 @api_view(['GET'])
 def get_district_feed(request, pk):
@@ -74,6 +75,31 @@ def get_location_feed(request, position):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# Constants defined by the World Geodetic System 1984 (WGS84)
+# http://stackoverflow.com/questions/20654918/python-how-to-speed-up-calculation-of-distances-between-cities
+A = 6378.137
+B = 6356.7523142
+ESQ = 6.69437999014 * 0.001
+
+
+def geodetic2ecef(lat, lon, alt=0):
+    """Convert geodetic coordinates to ECEF."""
+    lat, lon = radians(lat), radians(lon)
+    xi = sqrt(1 - ESQ * sin(lat))
+    x = (A / xi + alt) * cos(lat) * cos(lon)
+    y = (A / xi + alt) * cos(lat) * sin(lon)
+    z = (A / xi * (1 - ESQ) + alt) * sin(lat)
+    return x, y, z
+
+
+def euclidean_distance(distance):
+    """Return the approximate Euclidean distance corresponding to the
+    given great circle distance (in km).
+
+    """
+    return 2 * A * sin(distance / (2 * B))
+
+
 def calc_distance_in_meters(lat1, long1, lat2, long2):
     # http://andrew.hedges.name/experiments/haversine/
     R = 6373000
@@ -85,9 +111,9 @@ def calc_distance_in_meters(lat1, long1, lat2, long2):
 
 
 @api_view(['GET'])
-def get_bar_feed(request, pk):
+def get_venue_feed(request, pk):
     """
-    Returns a list of images for a particular bar
+    Returns a list of images for a particular venue
 
     e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
     """
