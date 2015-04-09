@@ -11,7 +11,6 @@ from math import radians, cos, sin, sqrt
 # from scipy.spatial import KDTree
 
 
-
 class VenueViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows venues to be viewed or edited.
@@ -38,14 +37,75 @@ class DistrictViewSet(viewsets.ModelViewSet):
 
 @csrf_exempt
 @api_view(['GET'])
-def get_district_feed(request, pk):
+def get_recent_district_feed(request, pk):
     """
-    Returns a list of all venues for a particular district
+    Returns a list of all venues for a particular district, newest first
+
+    e.g. input Buckhead, get back Moondogs, Red Door, Hole in the Wall, etc.
+    """
+    venues = Venue.objects.filter(district=pk).order_by('-timestamp')
+    serializer = VenueSerializer(venues, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['GET'])
+def get_top_district_feed(request, pk):
+    """
+    Returns a list of all venues for a particular district, most likes first
 
     e.g. input Buckhead, get back Moondogs, Red Door, Hole in the Wall, etc.
     """
     venues = Venue.objects.filter(district=pk).annotate(Count("post")).order_by('-post__count')
     serializer = VenueSerializer(venues, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_recent_venue_feed(request, pk):
+    """
+    Returns a list of images for a particular venue, newest first
+
+    e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
+    """
+    posts = Post.objects.filter(venue=pk).order_by('-timestamp')
+    serializer = PostSerializer(posts, context={'request': request}, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_top_venue_feed(request, pk):
+    """
+    Returns a list of images for a particular venue, most likes first
+
+    e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
+    """
+    posts = Post.objects.filter(venue=pk).annotate(Count('like')).order_by('-like__count')
+    serializer = PostSerializer(posts, context={'request': request}, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_recent_highlights_feed(request, pk):
+    """
+    Returns a list of images for a particular district, newest first
+
+    e.g. input Buckhead, get back Image9 with 30 likes, Image3 with 17 likes, etc.
+    """
+    posts = Post.objects.filter(venue__district=pk).order_by('-timestamp')
+    serializer = PostSerializer(posts, context={'request': request}, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_top_highlights_feed(request, pk):
+    """
+    Returns a list of images for a particular district, most likes first
+
+    e.g. input Buckhead, get back Image9 with 30 likes, Image3 with 17 likes, etc.
+    """
+    posts = Post.objects.filter(venue__district=pk).annotate(Count('like')).order_by('-like__count')
+    serializer = PostSerializer(posts, context={'request': request}, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -108,27 +168,3 @@ def calc_distance_in_meters(lat1, long1, lat2, long2):
     a = (sin(dlat / 2.0)) ^ 2 + cos(lat1) * cos(lat2) * (sin(dlong / 2.0)) ^ 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
-
-
-@api_view(['GET'])
-def get_venue_feed(request, pk):
-    """
-    Returns a list of images for a particular venue
-
-    e.g. input Moondogs, get back Image1 with 10 likes, Image2 with 8 likes, etc.
-    """
-    posts = Post.objects.filter(venue=pk).annotate(Count('like')).order_by('-like__count')
-    serializer = PostSerializer(posts, context={'request': request}, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_highlights_feed(request, pk):
-    """
-    Returns a list of images for a particular district
-
-    e.g. input Buckhead, get back Image9 with 30 likes, Image3 with 17 likes, etc.
-    """
-    posts = Post.objects.filter(venue__district=pk).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializer(posts, context={'request': request}, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
