@@ -11,7 +11,7 @@ django-storages==1.1.8
 djangorestframework==3.0.4
 oauthlib==0.7.2
 psycopg2==2.5
-scipy==0.15.1
+scipy==0.14.0
 python-openid==2.2.5
 python-social-auth==0.2.3
 requests==2.6.0
