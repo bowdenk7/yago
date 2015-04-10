@@ -3,10 +3,12 @@ from user_post.models import Post, ReportedPost, Like
 
 
 class PostSerializer(serializers.ModelSerializer):
-    like__count = serializers.IntegerField(default=0)
-
     class Meta:
         model = Post
+
+
+class PostSerializerWithLikes(PostSerializer):
+    like__count = serializers.IntegerField(default=0)
 
 
 class ReportedPostSerializer(serializers.HyperlinkedModelSerializer):

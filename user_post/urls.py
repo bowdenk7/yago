@@ -10,7 +10,6 @@ urlpatterns = patterns('',
 
     url(r'^like_post/$', csrf_exempt(views.toggle_like)),
     url(r'^report_post/$', csrf_exempt(views.report_post)),
-    url(r'^create_post/$', csrf_exempt(views.create_post)),
     url(r'^recent_posts/$', views.get_recent_posts),
     url(r'^top_posts/$', views.get_top_posts),
     url(r'^recent_venue_posts/(?P<pk>[0-9]+)/$', views.get_recent_venue_posts),

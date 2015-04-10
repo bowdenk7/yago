@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 import json
 
 from user_post.models import Post, ReportedPost, Like, REPORTED_POST_COUNT_THRESHOLD
-from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer
+from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer, PostSerializerWithLikes
 from yagoapp.settings import POSTS_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME, MEDIA_ROOT
 
 
@@ -74,46 +74,6 @@ class PostList(APIView):
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@csrf_exempt
-@api_view(['POST'])
-def create_post(request):
-    image_url = ""
-    thumbnail_url = ""
-
-    #need to generate a pk
-    post = Post(image_url="",
-                thumbnail_url="",
-                position=request.data['position'],
-                user=request.user,
-                venue=Venue.objects.get(pk=int(request.data['venue'])))
-    post.save()
-
-    f = request.data['file']
-    image_string = f.read()
-
-    #TODO generate thumbnail
-
-    #TODO add error handling
-
-    image_url = POSTS_URL + post.venue.name + "/" + str(post.pk) + ".png"
-    conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
-    bucket = conn.get_bucket(AWS_STORAGE_BUCKET_NAME)
-    key = Key(bucket)
-    key.key = image_url
-    key.set_contents_from_string(image_string)
-
-    data = dict()
-    data['image_url'] = image_url
-    data['thumbnail_url'] = thumbnail_url
-    data['user'] = request.user
-    data['position'] = request.data['position']
-    data['venue'] = request.data['venue']
-    post.image_url = MEDIA_ROOT + image_url
-    post.thumbnail_url = thumbnail_url
-    post.save()
-    serializer = PostSerializer(post)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class PostDetail(APIView):
     """
@@ -165,7 +125,7 @@ def get_recent_posts(request):
     """
     yesterday = datetime.now() - timedelta(hours=24)
     posts = Post.objects.filter(timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializer(posts, many=True)
+    serializer = PostSerializerWithLikes(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -177,7 +137,7 @@ def get_top_posts(request):
     """
     yesterday = datetime.now() - timedelta(hours=24)
     posts = Post.objects.filter(timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializer(posts, many=True)
+    serializer = PostSerializerWithLikes(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -189,7 +149,7 @@ def get_recent_venue_posts(request, pk):
     """
     yesterday = datetime.now() - timedelta(hours=24)
     posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializer(posts, many=True)
+    serializer = PostSerializerWithLikes(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -201,7 +161,7 @@ def get_top_venue_posts(request, pk):
     """
     yesterday = datetime.now() - timedelta(hours=24)
     posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializer(posts, many=True)
+    serializer = PostSerializerWithLikes(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -213,7 +173,7 @@ def get_recent_district_posts(request, pk):
     """
     yesterday = datetime.now() - timedelta(hours=24)
     posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializer(posts, many=True)
+    serializer = PostSerializerWithLikes(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -225,7 +185,7 @@ def get_top_district_posts(request, pk):
     """
     yesterday = datetime.now() - timedelta(hours=24)
     posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializer(posts, many=True)
+    serializer = PostSerializerWithLikes(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
