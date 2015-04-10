@@ -11,6 +11,10 @@ class PostSerializerWithLikes(PostSerializer):
     like__count = serializers.IntegerField(default=0)
 
 
+class TotalLikesSerializer(serializers.Serializer):
+    total_likes = serializers.IntegerField
+
+
 class ReportedPostSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:

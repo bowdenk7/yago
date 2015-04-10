@@ -235,5 +235,5 @@ def toggle_like(request):
         else:
             serializer.save()
         return_data = {'total_likes': Like.objects.filter(post=serializer.data['post']).count()}
-        return Response(json.dumps(return_data), status=status.HTTP_200_OK)
+        return Response(return_data, status=status.HTTP_200_OK, content_type='application/json')
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
