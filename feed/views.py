@@ -1,13 +1,11 @@
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
-from rest_framework.decorators import detail_route, list_route, api_view
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from feed.models import Venue, VenueClassification, District
 from feed.serializers import VenueSerializer, VenueClassificationSerializer, DistrictSerializer
-from user_post.models import Post
-from user_post.serializers import PostSerializer
 from django.db.models import Count, F
-from math import radians, cos, sin, sqrt
+from math import radians, cos, sin, sqrt, atan2
 # from scipy.spatial import KDTree
 
 

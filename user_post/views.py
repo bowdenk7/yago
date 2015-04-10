@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from feed.models import Venue
 from datetime import datetime, timedelta
+import json
 
 from user_post.models import Post, ReportedPost, Like, REPORTED_POST_COUNT_THRESHOLD
 from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer
@@ -258,19 +259,21 @@ def report_post(request):
 
 
 @api_view(['POST'])
-def like_post(request):
+def toggle_like(request):
     '''
-    Log a like for a certain post from a user, if the user has already liked the post, unlike it
+    Log a like for a certain post from a user, if the user has already liked the post, unlike it.
+
+    Return the new like total for that post
     '''
-    serializer = LikeSerializer(data=request.data, context={'request': request})
+    serializer = LikeSerializer(data={'user': request.user.pk, 'post': int(request.data['post'])}, context={'request': request})
     if serializer.is_valid():
 
         like = Like.objects.filter(user=serializer.data['user'], post=serializer.data['post'])
         if like.count() > 0:
             # if the user has already liked the post, unlike the post
             like.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            serializer.save()
+        return_data = {'total_likes': Like.objects.filter(post=serializer.data['post']).count()}
+        return Response(json.dumps(return_data), status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
