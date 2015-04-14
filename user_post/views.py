@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from feed.models import Venue
@@ -26,6 +27,7 @@ class PostList(APIView):
     position
     venue
     """
+    parser_classes = (MultiPartParser,)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
