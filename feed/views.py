@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from feed.models import Venue, VenueClassification, District
 from feed.serializers import VenueSerializer, VenueClassificationSerializer, DistrictSerializer, VenueSerializerWithDistance, DistrictSerializerWithDistance
-from django.db.models import Count, F
+from django.db.models import Count
 from math import radians, cos, sin, sqrt, atan2
 # from scipy.spatial import KDTree
 
@@ -122,4 +122,3 @@ def calc_distance_in_meters(lat1, long1, lat2, long2):
     a = math.pow((sin(dlat / 2.0)), 2.0) + cos(lat1) * cos(lat2) * math.pow(sin(dlong / 2.0), 2.0)
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
-

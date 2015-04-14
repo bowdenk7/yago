@@ -1,17 +1,16 @@
-from datetime import datetime, timedelta
 from django.contrib.auth import login
-from django.contrib.auth.models import User
 from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from social.apps.django_app.utils import psa
+from account.models import User
 from account.serializers import UserSerializer
 from rest_framework.response import Response
 from promotion.models import Promotion
 from promotion.serializers import PromotionSerializer
 from user_post.models import Post, Like
-from user_post.serializers import PostSerializer, LikeSerializer, ExtendedPostSerializer
+from user_post.serializers import LikeSerializer, ExtendedPostSerializer
 from user_post.views import formatted_time_proximity
 
 

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 
 import dj_database_url
-
 from util.settingsUtil import get_env_variable
 
 ADMINS = (
@@ -34,6 +33,8 @@ USE_AWS = get_env_variable('USE_AWS') == "True"
 TEMPLATE_DEBUG = True
 
 POSTS_URL = "uploads/posts/"
+
+AUTH_USER_MODEL = "account.User"
 
 ALLOWED_HOSTS = []
 
@@ -120,7 +121,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = 'c98acf52ab9ebe93f67ca89c6bb23e39'
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['public_profile', 'email', 'user_friends']
 
 SOCIAL_AUTH_STORAGE = 'social.apps.django_app.default.models.DjangoStorage'
-#SOCIAL_AUTH_USER_MODEL = 'django.contrib.auth.User'
+SOCIAL_AUTH_USER_MODEL = 'account.User'
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['first_name', 'email']

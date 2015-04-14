@@ -1,7 +1,8 @@
-from django.contrib.auth.models import User
+
 from django.db import models
-from geoposition.fields import GeopositionField
+from account.models import User
 from feed.models import Venue
+
 
 
 class PromotionType(models.Model):
