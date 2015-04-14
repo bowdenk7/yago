@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db.models import Count
@@ -10,7 +11,8 @@ from rest_framework.response import Response
 from promotion.models import Promotion
 from promotion.serializers import PromotionSerializer
 from user_post.models import Post, Like
-from user_post.serializers import PostSerializer, LikeSerializer, PostSerializerWithLikes
+from user_post.serializers import PostSerializer, LikeSerializer, ExtendedPostSerializer
+from user_post.views import formatted_time_proximity
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -74,7 +76,9 @@ def get_recent_user_posts(request, user):
     Returns a list of all posts made by a user, newest first
     """
     posts = Post.objects.filter(user=user).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -85,7 +89,9 @@ def get_top_user_posts(request, user):
     Returns a list of all posts made by a user, most likes first
     """
     posts = Post.objects.filter(user=user).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    serializer = ExtendedPostSerializer(posts, many=True)
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

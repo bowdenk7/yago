@@ -7,12 +7,9 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
 
 
-class PostSerializerWithLikes(PostSerializer):
+class ExtendedPostSerializer(PostSerializer):
     like__count = serializers.IntegerField(default=0)
-
-
-class TotalLikesSerializer(serializers.Serializer):
-    total_likes = serializers.IntegerField
+    time_text = serializers.StringRelatedField()
 
 
 class ReportedPostSerializer(serializers.HyperlinkedModelSerializer):

@@ -3,18 +3,20 @@ from boto.s3.key import Key
 from django.db.models import Count
 from django.http import Http404
 from django.utils.decorators import method_decorator
+from django.utils.timezone import utc
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from feed.models import Venue
 from datetime import datetime, timedelta
-import json
+from feed.serializers import VenueSerializerWithDistance
+from feed.views import calc_distance_in_meters
 
 from user_post.models import Post, ReportedPost, Like, REPORTED_POST_COUNT_THRESHOLD
-from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer, PostSerializerWithLikes
+from user_post.serializers import PostSerializer, ReportedPostSerializer, LikeSerializer, ExtendedPostSerializer
 from yagoapp.settings import POSTS_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME, MEDIA_ROOT
 
 
@@ -27,7 +29,7 @@ class PostList(APIView):
     position
     venue
     """
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, FileUploadParser,)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
@@ -50,9 +52,15 @@ class PostList(APIView):
                     venue=Venue.objects.get(pk=int(request.data['venue'])))
         post.save()
 
-        f = request.data['file']
-        image_string = f.read()
+        if 'image' in request.DATA:
+            f = request.DATA['image']
+        elif 'image' in request.FILES:
+            f = request.FILES['image']
+        else:
+            post.delete()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
+        image_string = f.read()
         #TODO generate thumbnail
 
         #TODO add error handling
@@ -126,9 +134,20 @@ def get_recent_posts(request):
     Returns a list of all posts made in the last 24 hours, newest first
     """
     yesterday = datetime.now() - timedelta(hours=24)
-    posts = Post.objects.filter(timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    posts = Post.objects.filter(timestamp__gte=yesterday).exclude(image_url='').annotate(Count("like")).order_by(
+        '-timestamp')
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def formatted_time_proximity(timestamp):
+    diff = datetime.utcnow().replace(tzinfo=utc) - timestamp
+    if diff > timedelta(hours=1):
+        return "{0}h".format(diff.seconds / 3600)
+    else:
+        return "{0}m".format(diff.seconds / 60)
 
 
 @csrf_exempt
@@ -138,8 +157,11 @@ def get_top_posts(request):
     Returns a list of all posts made in the last 24 hours, most likes first
     """
     yesterday = datetime.now() - timedelta(hours=24)
-    posts = Post.objects.filter(timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    posts = Post.objects.filter(timestamp__gte=yesterday).exclude(image_url='').annotate(
+        Count("like")).order_by('-like__count')
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -150,8 +172,11 @@ def get_recent_venue_posts(request, pk):
     Returns a list of all posts made for a venue in the last 24 hours, newest first
     """
     yesterday = datetime.now() - timedelta(hours=24)
-    posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).exclude(image_url='').annotate(
+        Count("like")).order_by('-timestamp')
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -162,8 +187,11 @@ def get_top_venue_posts(request, pk):
     Returns a list of all posts made for a venue in the last 24 hours, most likes first
     """
     yesterday = datetime.now() - timedelta(hours=24)
-    posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    posts = Post.objects.filter(venue=pk, timestamp__gte=yesterday).exclude(image_url='').annotate(
+        Count("like")).order_by('-like__count')
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -174,8 +202,11 @@ def get_recent_district_posts(request, pk):
     Returns a list of all posts made for a venue in the last 24 hours, newest first
     """
     yesterday = datetime.now() - timedelta(hours=24)
-    posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-timestamp')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).exclude(image_url='').annotate(
+        Count("like")).order_by('-timestamp')
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -186,8 +217,11 @@ def get_top_district_posts(request, pk):
     Returns a list of all posts made for a venue in the last 24 hours, most likes first
     """
     yesterday = datetime.now() - timedelta(hours=24)
-    posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).annotate(Count("like")).order_by('-like__count')
-    serializer = PostSerializerWithLikes(posts, many=True)
+    posts = Post.objects.filter(venue__district=pk, timestamp__gte=yesterday).exclude(image_url='').annotate(
+        Count("like")).order_by('-like__count')
+    for post in posts:
+        post.time_text = formatted_time_proximity(post.timestamp)
+    serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -210,7 +244,7 @@ def report_post(request):
             # if the user has already reported the post
             return Response(status=status.HTTP_304_NOT_MODIFIED)
 
-        if reports.count()+1 >= REPORTED_POST_COUNT_THRESHOLD:
+        if reports.count() + 1 >= REPORTED_POST_COUNT_THRESHOLD:
             # if adding it brings the total count to the threshold, we just shouldn't add it and go straight to removing it
             reports.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -227,7 +261,8 @@ def toggle_like(request):
 
     Return the new like total for that post
     '''
-    serializer = LikeSerializer(data={'user': request.user.pk, 'post': int(request.data['post'])}, context={'request': request})
+    serializer = LikeSerializer(data={'user': request.user.pk, 'post': int(request.data['post'])},
+                                context={'request': request})
     if serializer.is_valid():
 
         like = Like.objects.filter(user=serializer.data['user'], post=serializer.data['post'])
@@ -239,3 +274,21 @@ def toggle_like(request):
         return_data = {'total_likes': Like.objects.filter(post=serializer.data['post']).count()}
         return Response(return_data, status=status.HTTP_200_OK, content_type='application/json')
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_closest_venues(request, position):
+    """
+    Returns the closest 3 venues to the passed in geoposition.
+    """
+    latitude = float(position.split(",")[0])
+    longitude = float(position.split(",")[1])
+
+    venues = Venue.objects.all()
+    for venue in venues:
+        venue.distance = calc_distance_in_meters(float(latitude), float(longitude),
+                                                 float(venue.position.latitude),
+                                                 float(venue.position.longitude))
+    venues.order_by('-distance')
+    serializer = VenueSerializerWithDistance(venues[:3], many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

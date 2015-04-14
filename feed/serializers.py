@@ -7,6 +7,12 @@ class VenueSerializer(serializers.ModelSerializer):
         model = Venue
         fields = ('pk', 'name', 'position', 'cost', 'logo_url', 'classification', 'district')
 
+class VenueSerializerWithDistance(VenueSerializer):
+    distance = serializers.IntegerField()
+
+    class Meta:
+        model = Venue
+        fields = fields = ('pk', 'name', 'position', 'cost', 'logo_url', 'classification', 'district', 'distance')
 
 class VenueClassificationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,9 +21,14 @@ class VenueClassificationSerializer(serializers.ModelSerializer):
 
 
 class DistrictSerializer(serializers.ModelSerializer):
-    def update(self, instance, validated_data):
-        pass
-
     class Meta:
         model = District
         fields = ('pk', 'name', 'position')
+
+
+class DistrictSerializerWithDistance(DistrictSerializer):
+    distance = serializers.IntegerField()
+
+    class Meta:
+        model = District
+        fields = ('pk', 'name', 'position', 'distance')

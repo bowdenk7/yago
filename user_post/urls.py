@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^top_venue_posts/(?P<pk>[0-9]+)/$', views.get_top_venue_posts),
     url(r'^recent_district_posts/(?P<pk>[0-9]+)/$', views.get_recent_district_posts),
     url(r'^top_district_posts/(?P<pk>[0-9]+)/$', views.get_top_district_posts),
+    url(r'^closest_venues/(?P<position>(-?\d+\.\d+),(-?\d+\.\d+)+)$', views.get_closest_venues),
 
     url(r'^$', views.PostList.as_view()),
     url(r'^(?P<pk>[0-9]+)/$', views.PostDetail.as_view()),

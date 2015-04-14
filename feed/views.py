@@ -1,9 +1,10 @@
 from django.views.decorators.csrf import csrf_exempt
+import math
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from feed.models import Venue, VenueClassification, District
-from feed.serializers import VenueSerializer, VenueClassificationSerializer, DistrictSerializer
+from feed.serializers import VenueSerializer, VenueClassificationSerializer, DistrictSerializer, VenueSerializerWithDistance, DistrictSerializerWithDistance
 from django.db.models import Count, F
 from math import radians, cos, sin, sqrt, atan2
 # from scipy.spatial import KDTree
@@ -41,7 +42,7 @@ def get_recent_district_feed(request, pk):
 
     e.g. input Buckhead, get back Moondogs, Red Door, Hole in the Wall, etc.
     """
-    venues = Venue.objects.filter(district=pk).order_by('-timestamp')
+    venues = Venue.objects.filter(district=pk).exclude(logo_url='').order_by('-timestamp')
     serializer = VenueSerializer(venues, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -54,7 +55,8 @@ def get_top_district_feed(request, pk):
 
     e.g. input Buckhead, get back Moondogs, Red Door, Hole in the Wall, etc.
     """
-    venues = Venue.objects.filter(district=pk).annotate(Count("post")).order_by('-post__count')
+    venues = Venue.objects.filter(district=pk).exclude(logo_url='').annotate(Count("post")).order_by(
+        '-post__count')
     serializer = VenueSerializer(venues, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -70,18 +72,20 @@ def get_location_feed(request, position):
 
     **Params**:
 
-    position: float value pair, e.g. 33.4,-84.5
+    position: float value pair, e.g. 33.412141,-84.512312
 
     **Does not currently work**
     """
     latitude = float(position.split(",")[0])
     longitude = float(position.split(",")[1])
 
-    districts = District.objects.annotate(
-        distance=calc_distance_in_meters(float(latitude), float(longitude), F('position__latitude'),
-                                         F('position__longitude'))
-    ).order_by('-distance')
-    serializer = VenueSerializer(districts, many=True)
+    districts = District.objects.all()
+    for district in districts:
+        district.distance = calc_distance_in_meters(float(latitude), float(longitude),
+                                                    float(district.position.latitude),
+                                                    float(district.position.longitude))
+    districts.order_by('-distance')
+    serializer = DistrictSerializerWithDistance(districts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -115,6 +119,7 @@ def calc_distance_in_meters(lat1, long1, lat2, long2):
     R = 6373000
     dlat = lat2 - lat1
     dlong = long2 - long1
-    a = (sin(dlat / 2.0)) ^ 2 + cos(lat1) * cos(lat2) * (sin(dlong / 2.0)) ^ 2
+    a = math.pow((sin(dlat / 2.0)), 2.0) + cos(lat1) * cos(lat2) * math.pow(sin(dlong / 2.0), 2.0)
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
+
