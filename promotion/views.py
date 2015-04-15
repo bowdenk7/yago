@@ -68,7 +68,7 @@ def get_district_promotion_type_feed(request, pk):
     serializer = PromotionFeedSerializer(promotions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-gi
+
 @api_view(['POST'])
 def purchase_promotion(request):
     '''
