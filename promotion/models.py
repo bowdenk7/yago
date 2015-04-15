@@ -12,7 +12,7 @@ class PromotionType(models.Model):
     point_cost = models.IntegerField()
 
     def __unicode__(self):
-        return self.name + " at " + self.venue
+        return self.name + " at " + str(self.venue)
 
 
 class Promotion(models.Model):

@@ -16,7 +16,7 @@ class Post(models.Model):
     venue = models.ForeignKey(Venue)
 
     def __unicode__(self):
-        return self.user + "'s post at " + self.venue
+        return str(self.user) + "'s post at " + str(self.venue)
 
 class ReportedPost(models.Model):
     user = models.ForeignKey(User)
