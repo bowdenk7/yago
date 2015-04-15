@@ -5,7 +5,7 @@ from feed.models import Venue, VenueClassification, District
 class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
-        fields = ('pk', 'name', 'position', 'cost', 'logo_url', 'classification', 'district')
+        fields = ('pk', 'name', 'position', 'logo_url', 'district')
 
 class VenueSerializerWithDistance(VenueSerializer):
     distance = serializers.IntegerField()
