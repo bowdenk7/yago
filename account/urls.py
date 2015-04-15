@@ -8,7 +8,7 @@ router.register(r'users', views.UserViewSet)
 
 urlpatterns = patterns('',
 
-    url(r'^register-by-token/$', views.social_register, name='register'),
+    url(r'^authenticate_with_token/$', views.social_register, name='register'),
     url(r'^users_feed/$', csrf_exempt(views.get_users_feed)),
     url(r'^users_feed/(?P<limit>[0-9]+)$', csrf_exempt(views.get_limited_users_feed)),
     url(r'^recent_user_posts/(?P<user>[0-9]+)$', csrf_exempt(views.get_recent_user_posts)),
