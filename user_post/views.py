@@ -84,10 +84,11 @@ class PostList(APIView):
         post.save()
 
         points = Points(user=post.user, venue=post.venue, value=POINT_VALUE_FOR_CREATING_POST)
-        user = User.models.get(user=points.user)
+        user = User.objects.get(pk=points.user.pk)
         user.current_points += points.value
         points.save()
         user.save()
+
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -276,9 +277,9 @@ def toggle_like(request):
             # if the user has already liked the post, unlike the post
             like.delete()
         else:
-            post = Post.objects.get(post=serializer.data['post'])
+            post = Post.objects.get(pk=serializer.data['post'])
             points = Points(user=post.user, venue=post.venue, value=POINT_VALUE_FOR_LIKING_POST)
-            user = User.models.get(user=post.user)
+            user = User.objects.get(pk=post.user.pk)
             user.current_points += points.value
             serializer.save()
             points.save()
