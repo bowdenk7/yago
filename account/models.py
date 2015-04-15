@@ -9,9 +9,15 @@ POINT_VALUE_FOR_REPORTED_POST = -1 * (POINT_VALUE_FOR_CREATING_POST + 5)
 class User(AbstractUser):
     current_points = models.IntegerField(default=0)
 
+    def __unicode__(self):
+        return self.username
+
 
 class Points(models.Model):
     user = models.ForeignKey(User)
     venue = models.ForeignKey(Venue)
     timestamp = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField()
+
+    def __unicode__(self):
+        return self.user.username + " - " + str(self.value) + " points"

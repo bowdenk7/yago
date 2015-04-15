@@ -10,7 +10,9 @@ class PromotionType(models.Model):
     name = models.CharField(max_length=120)
     description = models.CharField(max_length=400)
     point_cost = models.IntegerField()
-    # TODO add images and other supporting meta data
+
+    def __unicode__(self):
+        return self.name + " at " + self.venue
 
 
 class Promotion(models.Model):
@@ -19,3 +21,6 @@ class Promotion(models.Model):
     expiration = models.DateTimeField(null=True, blank=True)
     type = models.ForeignKey(PromotionType)
     redeemed = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.user + "'s " + str(self.type)

@@ -16,17 +16,5 @@ urlpatterns = patterns('',
     url(r'^user_likes/(?P<user>[0-9]+)$', csrf_exempt(views.get_user_likes)),
     url(r'^user_promotion_feed/(?P<pk>[0-9]+)$', csrf_exempt(views.get_user_promotion_feed)),
     url(r'^user_redeemed_promotion_feed/(?P<pk>[0-9]+)$', csrf_exempt(views.get_user_redeemed_promotion_feed)),
-    
-
-    # Attempt to register a new user
-    # url(r'^register/$', views.register_user, name='register'),
-
-    # Attempt to log user into session
-    # ex. /user/login/
-    # url(r'^login/$', views.login_user, name='login'),
-
-    # Log user out of the session
-    # ex. /user/logout/
-    # url(r'^logout/$', views.logout_user, name='logout'),
 
 )

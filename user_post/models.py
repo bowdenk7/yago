@@ -15,6 +15,8 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     venue = models.ForeignKey(Venue)
 
+    def __unicode__(self):
+        return self.user + "'s post at " + self.venue
 
 class ReportedPost(models.Model):
     user = models.ForeignKey(User)
