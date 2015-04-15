@@ -11,6 +11,7 @@ from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from feed.models import Venue
+from account.models import User, Points, POINT_VALUE_FOR_CREATING_POST, POINT_VALUE_FOR_LIKING_POST, POINT_VALUE_FOR_REPORTED_POST
 from datetime import datetime, timedelta
 from feed.serializers import VenueSerializerWithDistance
 from feed.views import calc_distance_in_meters
@@ -81,6 +82,12 @@ class PostList(APIView):
         post.image_url = MEDIA_ROOT + image_url
         post.thumbnail_url = thumbnail_url
         post.save()
+
+        points = Points(user=post.user, venue=post.venue, value=POINT_VALUE_FOR_CREATING_POST)
+        user = User.models.get(user=points.user)
+        user.current_points += points.value
+        points.save()
+        user.save()
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -261,8 +268,7 @@ def toggle_like(request):
 
     Return the new like total for that post
     '''
-    serializer = LikeSerializer(data={'user': request.user.pk, 'post': int(request.data['post'])},
-                                context={'request': request})
+    serializer = LikeSerializer(data={'user': request.user.pk, 'post': int(request.data['post'])})
     if serializer.is_valid():
 
         like = Like.objects.filter(user=serializer.data['user'], post=serializer.data['post'])
@@ -270,7 +276,14 @@ def toggle_like(request):
             # if the user has already liked the post, unlike the post
             like.delete()
         else:
+            post = Post.objects.get(post=serializer.data['post'])
+            points = Points(user=post.user, venue=post.venue, value=POINT_VALUE_FOR_LIKING_POST)
+            user = User.models.get(user=post.user)
+            user.current_points += points.value
             serializer.save()
+            points.save()
+            user.save()
+
         return_data = {'total_likes': Like.objects.filter(post=serializer.data['post']).count()}
         return Response(return_data, status=status.HTTP_200_OK, content_type='application/json')
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
