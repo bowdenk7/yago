@@ -2,8 +2,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets, status
+from feed.models import Venue
 from promotion.models import PromotionType, Promotion
-from promotion.serializers import PromotionTypeSerializer, PromotionSerializer
+from promotion.serializers import PromotionTypeSerializer, PromotionSerializer, PromotionFeedSerializer
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -32,7 +33,9 @@ def get_promotion_type_feed(request):
     e.g. get back promotions about free cover and discounts anywhere
     """
     promotions = PromotionType.objects.all().order_by('-point_cost')
-    serializer = PromotionTypeSerializer(promotions, many=True)
+    for promotion in promotions:
+        promotion.venue_name = Venue.objects.get(pk=promotion.venue.pk).name
+    serializer = PromotionFeedSerializer(promotions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -45,7 +48,9 @@ def get_venue_promotion_type_feed(request, pk):
     e.g. input Red Door, get back promotions about free cover and discounts at Red Door
     """
     promotions = PromotionType.objects.filter(venue=pk).order_by('-point_cost')
-    serializer = PromotionTypeSerializer(promotions, many=True)
+    for promotion in promotions:
+        promotion.venue_name = Venue.objects.get(pk=promotion.venue.pk).name
+    serializer = PromotionFeedSerializer(promotions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -58,10 +63,12 @@ def get_district_promotion_type_feed(request, pk):
     e.g. input Buckhead, get back promotions about free cover and discounts at Red Door, Moondogs, etc.
     """
     promotions = PromotionType.objects.filter(venue__district=pk).order_by('-point_cost')
-    serializer = PromotionTypeSerializer(promotions, many=True)
+    for promotion in promotions:
+        promotion.venue_name = Venue.objects.get(pk=promotion.venue.pk).name
+    serializer = PromotionFeedSerializer(promotions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+gi
 @api_view(['POST'])
 def purchase_promotion(request):
     '''

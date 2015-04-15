@@ -9,7 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class ExtendedPostSerializer(PostSerializer):
     like__count = serializers.IntegerField(default=0)
-    time_text = serializers.StringRelatedField()
+    time_text = serializers.CharField()
 
 
 class ReportedPostSerializer(serializers.HyperlinkedModelSerializer):

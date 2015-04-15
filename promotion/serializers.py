@@ -8,6 +8,12 @@ class PromotionTypeSerializer(serializers.ModelSerializer):
         fields = ('venue', 'name', 'description', 'point_cost')
 
 
+class PromotionFeedSerializer(serializers.Serializer):
+    venue_name = serializers.CharField()
+    name = serializers.CharField()
+    point_cost = serializers.IntegerField()
+
+
 class PromotionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Promotion
