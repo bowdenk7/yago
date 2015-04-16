@@ -132,9 +132,17 @@ def get_user_redeemed_promotion_feed(request, pk):
 
 
 @api_view(['GET'])
-def get_user_lifetime_score(request):
-    return_data = Points.objects.filter(user=request.user).aggregate(
+def get_profile_info(request, pk):
+    user = User.objects.get(pk=pk)
+    return_data = Points.objects.filter(user=pk).aggregate(
         lifetime_score=Sum('value'))
     if return_data['lifetime_score'] is None:
         return_data['lifetime_score'] = 0
+    return_data['first_name'] = user.first_name
+    return_data['current_points'] = user.current_points
     return Response(return_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_my_profile_info(request):
+    return get_profile_info(request=request, pk=request.user.pk)
