@@ -1,10 +1,10 @@
 from django.contrib.auth import login
-from django.db.models import Count
+from django.db.models import Count, F, Sum, IntegerField
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from social.apps.django_app.utils import psa
-from account.models import User
+from account.models import User, Points
 from account.serializers import UserSerializer
 from rest_framework.response import Response
 from promotion.models import Promotion
@@ -129,3 +129,12 @@ def get_user_redeemed_promotion_feed(request, pk):
     promotions = Promotion.objects.filter(user=pk, redeemed=True).order_by('-expiration')
     serializer = PromotionSerializer(promotions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_user_lifetime_score(request):
+    return_data = Points.objects.filter(user=request.user).aggregate(
+        lifetime_score=Sum('value'))
+    if return_data['lifetime_score'] is None:
+        return_data['lifetime_score'] = 0
+    return Response(return_data, status=status.HTTP_200_OK)
