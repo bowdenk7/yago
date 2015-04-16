@@ -23,4 +23,4 @@ class Promotion(models.Model):
     redeemed = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.user + "'s " + str(self.type)
+        return self.user.username + "'s " + str(self.type)
