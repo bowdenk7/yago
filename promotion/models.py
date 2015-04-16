@@ -17,7 +17,7 @@ class PromotionType(models.Model):
 
 class Promotion(models.Model):
     user = models.ForeignKey(User, related_name='promotions')
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_created=True)
     expiration = models.DateTimeField(null=True, blank=True)
     type = models.ForeignKey(PromotionType)
     redeemed = models.BooleanField(default=False)

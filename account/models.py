@@ -16,7 +16,7 @@ class User(AbstractUser):
 class Points(models.Model):
     user = models.ForeignKey(User)
     venue = models.ForeignKey(Venue)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_created=True)
     value = models.IntegerField()
 
     def __unicode__(self):
