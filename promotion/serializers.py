@@ -5,7 +5,7 @@ from promotion.models import PromotionType, Promotion
 class PromotionTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PromotionType
-        fields = ('venue', 'name', 'description', 'point_cost')
+        fields = ('venue', 'name', 'description', 'point_cost', 'pk')
 
 
 class PromotionFeedSerializer(serializers.Serializer):
