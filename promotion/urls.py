@@ -15,4 +15,5 @@ urlpatterns = patterns('',
 
     url(r'^purchase_promotion/$', csrf_exempt(views.purchase_promotion)),
     url(r'^redeem_promotion/$', csrf_exempt(views.redeem_promotion)),
+    url(r'^purchase_and_redeem/$', csrf_exempt(views.purchase_and_redeem))
 )

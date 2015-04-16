@@ -78,6 +78,8 @@ def purchase_promotion(request):
         promotion_type = PromotionType.objects.get(pk=int(request.data['type']))
         promotion = Promotion(user=request.user, type=promotion_type)
         promotion.save()
+        request.user.current_points -= promotion_type.point_cost
+        request.user.save()
         serializer = PromotionSerializer(promotion)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     except ObjectDoesNotExist:
@@ -101,3 +103,18 @@ def redeem_promotion(request):
         return Response(serializer.data, status=status.HTTP_206_PARTIAL_CONTENT)
     return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['POST'])
+def purchase_and_redeem(request):
+    '''
+    Creates a promotion and redeems it immedietly. Removes points from user. Returns user's new balance.
+    '''
+    try:
+        promotion_type = PromotionType.objects.get(pk=int(request.data['type']))
+        promotion = Promotion(user=request.user, type=promotion_type, redeemed=True)
+        promotion.save()
+        request.user.current_points -= promotion_type.point_cost
+        request.user.save()
+        return Response({"new_points_total": request.user.current_points}, status=status.HTTP_201_CREATED)
+    except ObjectDoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
