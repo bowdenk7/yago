@@ -12,7 +12,7 @@ class Post(models.Model):
     thumbnail_url = models.CharField(max_length=400)
     position = GeopositionField()
     user = models.ForeignKey(User, related_name='posts')
-    timestamp = models.DateTimeField(auto_created=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     venue = models.ForeignKey(Venue)
 
     def __unicode__(self):
