@@ -12,6 +12,7 @@ class PromotionFeedSerializer(serializers.Serializer):
     venue_name = serializers.CharField()
     name = serializers.CharField()
     point_cost = serializers.IntegerField()
+    pk = serializers.IntegerField()
 
 
 class PromotionSerializer(serializers.ModelSerializer):
