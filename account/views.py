@@ -96,6 +96,11 @@ def get_top_user_posts(request, user):
     serializer = ExtendedPostSerializer(posts, many=True)
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

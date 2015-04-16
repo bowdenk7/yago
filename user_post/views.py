@@ -184,6 +184,11 @@ def get_recent_venue_posts(request, pk):
         Count("like")).order_by('-timestamp')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
