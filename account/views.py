@@ -77,6 +77,7 @@ def get_recent_user_posts(request, user):
     posts = Post.objects.filter(user=user).annotate(Count("like")).order_by('-timestamp')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        post.is_liked = 
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

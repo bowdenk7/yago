@@ -263,7 +263,7 @@ def report_post(request):
 
 
 @api_view(['POST'])
-def toggle_like(request):
+def like_post(request):
     '''
     Log a like for a certain post from a user, if the user has already liked the post, unlike it.
 
@@ -274,8 +274,9 @@ def toggle_like(request):
 
         like = Like.objects.filter(user=serializer.data['user'], post=serializer.data['post'])
         if like.count() > 0:
-            # if the user has already liked the post, unlike the post
-            like.delete()
+            # if the user has already liked the post just return
+            return_data = {'total_likes': Like.objects.filter(post=serializer.data['post']).count()}
+            return Response(return_data, status=status.HTTP_200_OK, content_type='application/json')
         else:
             post = Post.objects.get(pk=serializer.data['post'])
             points = Points(user=post.user, venue=post.venue, value=POINT_VALUE_FOR_LIKING_POST)

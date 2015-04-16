@@ -10,6 +10,7 @@ class PostSerializer(serializers.ModelSerializer):
 class ExtendedPostSerializer(PostSerializer):
     like__count = serializers.IntegerField(default=0)
     time_text = serializers.CharField()
+    is_liked = serializers.BooleanField()
 
 
 class ReportedPostSerializer(serializers.HyperlinkedModelSerializer):

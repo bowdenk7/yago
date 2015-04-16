@@ -8,7 +8,7 @@ router.register(r'likes', views.LikeViewSet)
 
 urlpatterns = patterns('',
 
-    url(r'^like_post/$', csrf_exempt(views.toggle_like)),
+    url(r'^like_post/$', csrf_exempt(views.like_post)),
     url(r'^report_post/$', csrf_exempt(views.report_post)),
     url(r'^recent_posts/$', views.get_recent_posts),
     url(r'^top_posts/$', views.get_top_posts),
