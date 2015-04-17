@@ -146,6 +146,11 @@ def get_recent_posts(request):
         '-timestamp')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -169,6 +174,11 @@ def get_top_posts(request):
         Count("like")).order_by('-like__count')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -204,6 +214,11 @@ def get_top_venue_posts(request, pk):
         Count("like")).order_by('-like__count')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -219,6 +234,11 @@ def get_recent_district_posts(request, pk):
         Count("like")).order_by('-timestamp')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -234,6 +254,11 @@ def get_top_district_posts(request, pk):
         Count("like")).order_by('-like__count')
     for post in posts:
         post.time_text = formatted_time_proximity(post.timestamp)
+        like = Like.objects.filter(user=request.user, post=post)
+        if like.count() > 0:
+            post.is_liked = True
+        else:
+            post.is_liked = False
     serializer = ExtendedPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
